@@ -32,7 +32,26 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 HOST = "s3.amazonaws.com"
-BUCKET_PATH = "plink1-assets/plink_win64_{version}.zip"
+# 官方 S3 安装包按平台区分（2026-11-07 验证 20260927 三个包均可下载）。
+ASSET_TEMPLATES = {
+    "win32": "plink1-assets/plink_win64_{version}.zip",
+    "linux": "plink1-assets/plink_linux_x86_64_{version}.zip",
+    "darwin": "plink1-assets/plink_mac_{version}.zip",
+}
+
+
+def asset_path(version: str) -> str:
+    """Return the official S3 asset path for this platform."""
+    platform = sys.platform
+    if platform.startswith("win"):
+        key = "win32"
+    elif platform.startswith("linux"):
+        key = "linux"
+    elif platform == "darwin":
+        key = "darwin"
+    else:
+        raise RuntimeError(f"不支持的平台 {platform!r}：请手动下载 PLINK 1.9 后用 --dest 指定")
+    return ASSET_TEMPLATES[key].format(version=version)
 DOH_ENDPOINTS = [
     "https://doh.pub/dns-query?name={host}&type=A",
     "https://dns.alidns.com/resolve?name={host}&type=A",
@@ -168,7 +187,7 @@ def download(url: str, total: int, ips: list[str], threads: int, chunk: int,
 
 def install(dest: Path, version: str, threads: int, chunk_kb: int) -> Path:
     dest.mkdir(parents=True, exist_ok=True)
-    url = f"https://{HOST}/{BUCKET_PATH.format(version=version)}"
+    url = f"https://{HOST}/{asset_path(version)}"
     ips = resolve_ips()
     log(f"解析到 {len(ips)} 个 S3 IP：{', '.join(ips[:4])} ...")
     total = content_length(url, ips)
@@ -192,6 +211,9 @@ def install(dest: Path, version: str, threads: int, chunk_kb: int) -> Path:
     finally:
         shutil.rmtree(workdir, ignore_errors=True)
     exe = dest / ("plink.exe" if os.name == "nt" else "plink")
+    if os.name != "nt":
+        # zipfile 提取不保留 Unix 可执行位，手动补上，否则无法运行
+        os.chmod(exe, 0o755)
     log(f"已安装: {exe}")
     return exe
 

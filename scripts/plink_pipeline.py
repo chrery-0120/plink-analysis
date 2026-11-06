@@ -29,6 +29,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
+from pipeline import __version__ as PIPELINE_VERSION
 from pipeline import config as config_mod  # noqa: E402
 from pipeline import utils  # noqa: E402
 
@@ -474,6 +475,8 @@ def _parse_stages(value: str | None) -> list[str]:
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="PLINK 全流程分析（科研级）")
+    parser.add_argument("--version", action="version",
+                        version=f"plink-analysis {PIPELINE_VERSION}")
     parser.add_argument("--plink-exe", default=None, help="plink 可执行文件路径")
     sub = parser.add_subparsers(dest="command", required=True)
 

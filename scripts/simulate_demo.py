@@ -30,7 +30,7 @@ PLINK .bed 编码（已用 PLINK 1.9.0 实测确认）
 
 用法
 ----
-    python scripts/simulate_demo.py --out E:\\deepseek\\demo_data
+    python scripts/simulate_demo.py --out <workspace>/demo_data
     python scripts/simulate_demo.py --out <dir> --n-samples 200 --n-snps 2000  # 小数据快测
     python scripts/simulate_demo.py --out <dir> --no-plink-verify              # 跳过 PLINK 校验
 
@@ -752,17 +752,17 @@ README_TEMPLATE = """\
 
 ```bash
 python .agents/skills/plink-analysis/scripts/plink_pipeline.py auto \\
-    --input E:\\deepseek\\demo_data\\geno \\
-    --pheno E:\\deepseek\\demo_data\\pheno.txt \\
-    --covar E:\\deepseek\\demo_data\\covar.txt \\
-    --group E:\\deepseek\\demo_data\\group.txt \\
-    --run-id demo_qtl --out-root E:\\deepseek\\plink_runs
+    --input {demo_dir}/geno \\
+    --pheno {demo_dir}/pheno.txt \\
+    --covar {demo_dir}/covar.txt \\
+    --group {demo_dir}/group.txt \\
+    --run-id demo_qtl --out-root {out_root}
 python .agents/skills/plink-analysis/scripts/selftest.py
 ```
 
 ## PLINK 读取验证（{verify_status}）
 
-验证命令（全部通过 `E:\\deepseek\\tools\\plink\\plink.exe` 实际执行）：
+验证命令（全部通过 `{plink_exe}` 实际执行）：
 
 ```bash
 plink --bfile geno --freq        --out verify/freq
@@ -800,6 +800,8 @@ def write_readme(out_dir: Path, ds: dict, meta: dict, verify: dict) -> None:
         n_causal=meta["n_causal"], n_major=meta["n_major_qtl"], pve=PVE_CAUSAL,
         n_poly=meta["n_poly_snps"], h2_liab=meta["h2_liability"],
         verify_status=verify.get("status", "skipped"), verify_table=table(verify),
+        demo_dir=str(out_dir), out_root=str(out_dir.parent / "plink_runs"),
+        plink_exe=verify.get("plink", "plink"),
     )
     (out_dir / "README.md").write_text(text, encoding="utf-8")
 

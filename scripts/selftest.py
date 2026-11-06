@@ -4,7 +4,7 @@
 
 做什么
 ------
-1. 生成（或校验复用）演示数据集 ``E:\\deepseek\\demo_data``；
+1. 生成（或校验复用）演示数据集 ``<workspace>/demo_data``；
 2. 用主 CLI 跑完整流程：``plink_pipeline.py auto --input <demo/geno>
    --pheno pheno.txt --covar covar.txt --group group.txt --run-id selftest ...``；
 3. 断言各阶段状态、报告/metrics 产物、独立重算校验（validate）、仿真校准（λ/FPR/
@@ -17,7 +17,7 @@
     python scripts/selftest.py --with-binary         # 追加二元性状流程
     python scripts/selftest.py --check-resume        # 追加断点续跑检查
     python scripts/selftest.py --keep-run            # 保留本次 run 目录
-    python scripts/selftest.py --run-id mytest --out-root E:\\deepseek\\plink_runs
+    python scripts/selftest.py --run-id mytest --out-root <workspace>/plink_runs
 
 退出码：0 = 全部 PASS；1 = 有 FAIL；2 = 自检脚本自身异常/环境缺失。
 目标耗时 ≤ 15 分钟（默认 demo 规模约 1~2 分钟）。
