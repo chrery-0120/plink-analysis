@@ -2619,7 +2619,8 @@ def _section_repro(config: Mapping[str, Any], run_dir: Path) -> list[str]:
     lines.append("在 skill 根目录（`plink-analysis/`）下执行：")
     lines.append("")
     lines.append("```powershell")
-    lines.append('cd E:\\deepseek\\.agents\\skills\\plink-analysis')
+    skill_dir = Path(__file__).resolve().parents[2]
+    lines.append(f"cd {skill_dir}")
     lines.append(cmd_auto)
     lines.append("```")
     lines.append("")

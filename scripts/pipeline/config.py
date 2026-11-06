@@ -13,6 +13,7 @@ from typing import Any, Iterable
 
 import pandas as pd
 
+from . import __version__ as PIPELINE_VERSION
 from . import utils
 
 # ---------------------------------------------------------------------------
@@ -189,6 +190,7 @@ def chr_flags(species: dict[str, Any]) -> list[str]:
 def default_config() -> dict[str, Any]:
     return {
         "schema_version": 1,
+        "pipeline_version": PIPELINE_VERSION,
         "run_id": None,
         "created_at": None,
         "input": {

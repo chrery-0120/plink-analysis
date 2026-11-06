@@ -2,7 +2,7 @@
 
 Run from anywhere with::
 
-    python E:\\deepseek\\.agents\\skills\\plink-analysis\\scripts\\pipeline\\_report_selftest.py
+    python scripts/pipeline/_report_selftest.py
 
 The script builds a temporary, fully fabricated PLINK run directory (all five
 stages, fake metrics per DESIGN.md section 8, real CSV tables and real PNG
