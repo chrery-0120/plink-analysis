@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install PLINK 1.9 (Linux)
+        run: >
+          python scripts/install_plink.py
+          --dest "$GITHUB_WORKSPACE/tools/plink"
+          --version 20260927
+
+      - name: Run end-to-end selftest
+        env:
+          PLINK_EXE: ${{ github.workspace }}/tools/plink/plink
+        run: >
+          python scripts/selftest.py
+          --demo-dir "$RUNNER_TEMP/demo_data"
+          --out-root "$RUNNER_TEMP/plink_runs"
+          --run-id ci_selftest
+
+      - name: Run report-layer selftest
+        run: python scripts/pipeline/_report_selftest.py
