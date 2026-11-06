@@ -1,5 +1,7 @@
 # plink-analysis
 
+[![CI](https://github.com/chrery-0120/plink-analysis/actions/workflows/ci.yml/badge.svg)](https://github.com/chrery-0120/plink-analysis/actions/workflows/ci.yml)
+
 **科研级 PLINK 1.9 全流程自动化分析 Skill** —— 从原始基因型数据到可写进论文的结果与中文报告。
 
 A research-grade, end-to-end PLINK 1.9 pipeline packaged as an agent **skill**: data intake → strict QC → population structure / relatedness / LD / ROH / FST → GWAS → simulation-based calibration + independent recomputation → staged Chinese reports. Built for animal breeding / population genetics (pig, cattle, sheep, goat, chicken, …) and general cohorts.
@@ -23,6 +25,10 @@ A research-grade, end-to-end PLINK 1.9 pipeline packaged as an agent **skill**: 
 ```
 plink-analysis/
 ├── SKILL.md                 # Agent 主指令：前置检查、分段执行、分段汇报协议、失败处理
+├── DESIGN.md                # 设计文档：阶段、模块契约、阈值与验收标准
+├── LICENSE                  # MIT
+├── .github/workflows/ci.yml # 每次 push/PR 跑端到端自检
+├── examples/demo/           # 演示数据跑出的示例报告（final_report.html/.md）
 ├── references/              # 中文方法学文档（按需加载）
 │   ├── 01-pipeline-stages.md
 │   ├── 02-qc-thresholds.md
@@ -56,12 +62,12 @@ git clone <this-repo> <workspace>/.dsh/skills/plink-analysis
 
 ### 2) 依赖
 
-- Python ≥ 3.10
+- Python ≥ 3.10（已验证 3.12；`requirements.txt` 已按验证通过的版本锁定）
 - `pip install -r requirements.txt`
 - PLINK 1.9（本机没有时）：
 
 ```bash
-python scripts/install_plink.py            # 自动下载到 <workspace>/tools/plink/
+python scripts/install_plink.py            # 按平台自动下载（Windows/Linux/macOS）到 <workspace>/tools/plink/
 # 或指定已有二进制
 python scripts/plink_pipeline.py --plink-exe /path/to/plink ...
 ```
@@ -108,7 +114,7 @@ python scripts/plink_pipeline.py auto \
 
 ## 准确性与验证
 
-本仓库自带演示数据集（400 样本 × 8000 SNP，2 个亚群、10 对重复/亲缘、2% 缺失、30 个已知因果 SNP）与一键自检：
+演示数据由 `scripts/simulate_demo.py` 按固定种子生成（400 样本 × 8000 SNP，2 个亚群、10 对重复/亲缘、2% 缺失、30 个已知因果 SNP），一键自检：
 
 ```bash
 python scripts/selftest.py --with-binary
@@ -121,6 +127,12 @@ python scripts/selftest.py --with-binary
 - 零模型校准：λ = 0.998（SD 0.035），α=0.05 经验假阳性率 0.0488
 - 已知 QTL（h²=0.5）：5e-8 any-hit = 1.00，rank AUC = 0.773，效应量回归斜率 1.035
 - 主 GWAS：λGC = 1.063，Bonferroni 显著 3 个，lead SNP 出现在报告中
+
+2026-11-07 复核：按 `requirements.txt` 锁定版本（Python 3.12.3、PLINK 1.9.0 2026-09-27 构建）复跑，数量性状自检 20/20 PASS，关键数字与上表一致。
+
+## 示例报告
+
+`examples/demo/` 是演示数据跑出的完整报告：`final_report.html`（自包含，下载后用浏览器打开即可）与 `final_report.md`。不用跑流程就能看到输出长什么样。
 
 ## 常用命令
 
@@ -139,4 +151,4 @@ python scripts/selftest.py --with-binary                      # 端到端验收
 
 ## License
 
-License 待定（作者可自行添加 MIT / Apache-2.0 等）。在添加 LICENSE 前，默认保留所有权利。
+MIT License，见 [LICENSE](LICENSE)。

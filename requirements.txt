@@ -1,6 +1,9 @@
-numpy>=1.24
-pandas>=2.0
-scipy>=1.10
-matplotlib>=3.7
-statsmodels>=0.14
-PyYAML>=6.0
+# 依赖版本已锁定：2026-11-07 在 Python 3.12.3 + PLINK 1.9.0（2026-09-27 构建）上验证，
+# 数量性状自检 20/20 PASS（python scripts/selftest.py）。
+# 升级任一依赖后请重新跑自检，确认通过再更新此处版本号。
+numpy==2.5.4
+pandas==3.1.1
+scipy==1.18.1
+matplotlib==3.11.2
+statsmodels==0.15.0
+PyYAML==6.0.3
